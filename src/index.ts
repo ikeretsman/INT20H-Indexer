@@ -1,1 +1,3 @@
-import { ponder } from "ponder:registry";
+import "./projects";
+import "./users";
+import "./assignments";
