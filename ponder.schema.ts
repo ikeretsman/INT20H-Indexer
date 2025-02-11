@@ -1,4 +1,10 @@
-import { index, onchainTable, primaryKey, relations } from "ponder";
+import {
+  index,
+  onchainTable,
+  primaryKey,
+  relations,
+  uniqueIndex,
+} from "ponder";
 
 export const user = onchainTable(
   "users",
@@ -60,14 +66,22 @@ export const userProjectRelations = relations(userProject, ({ one }) => ({
   }),
 }));
 
-export const assignment = onchainTable("assignments", (t) => ({
-  id: t.uuid().primaryKey(),
-  student: t.hex().notNull(),
-  projectId: t.bigint("project_id").notNull(),
-  data: t.text().notNull(),
-  gradesCount: t.bigint().notNull(),
-  status: t.text().notNull(),
-}));
+export const assignment = onchainTable(
+  "assignments",
+  (t) => ({
+    id: t.uuid().primaryKey(),
+    student: t.hex().notNull(),
+    projectId: t.bigint("project_id").notNull(),
+    data: t.text().notNull(),
+    gradesCount: t.bigint().notNull(),
+    status: t.text().notNull(),
+  }),
+  (table) => ({
+    studentProjectUniqueConstraint: uniqueIndex(
+      "students_project_unique_constraint"
+    ).on(table.student, table.projectId),
+  })
+);
 
 export const assignmentRelations = relations(assignment, ({ one, many }) => ({
   user: one(user, { fields: [assignment.student], references: [user.address] }),
