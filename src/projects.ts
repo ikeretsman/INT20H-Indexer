@@ -12,7 +12,12 @@ ponder.on("ProjectsRegistry:ProjectCreated", async ({ context, event }) => {
 
   const { students, teachers } = project;
 
-  await db.insert(tProject).values({ ...project, id: projectId });
+  await db.insert(tProject).values({
+    ...project,
+    id: projectId,
+    createdAt: project.createdAt * 1_000n,
+    expiresAt: project.expiresAt * 1_000n,
+  });
 
   const userProjectPromises = [...students, ...teachers].map((address) =>
     db.insert(tUserProject).values({
