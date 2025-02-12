@@ -45,8 +45,10 @@ export const project = onchainTable(
   })
 );
 
-export const projectRelations = relations(project, ({ one }) => ({
+export const projectRelations = relations(project, ({ one, many }) => ({
   creator: one(user, { fields: [project.creator], references: [user.address] }),
+  assignments: many(assignment),
+  userProjectRelation: many(userProject),
 }));
 
 export const userProject = onchainTable(
