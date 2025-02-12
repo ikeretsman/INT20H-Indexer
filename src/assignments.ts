@@ -28,24 +28,22 @@ ponder.on(
       args: { teacher, projectId, student },
     } = event;
 
-    await db.sql.transaction(async (tx) => {
-      const [assignment] = await tx
-        .select({ id: tAssignment.id })
-        .from(tAssignment)
-        .where(
-          and(
-            eq(tAssignment.projectId, projectId),
-            eq(tAssignment.student, student)
-          )
-        );
+    const [assignment] = await db.sql
+      .select({ id: tAssignment.id })
+      .from(tAssignment)
+      .where(
+        and(
+          eq(tAssignment.projectId, projectId),
+          eq(tAssignment.student, student)
+        )
+      );
 
-      if (!assignment) return;
+    if (!assignment) return;
 
-      await db.insert(tGrades).values({ assignmentId: assignment.id, teacher });
-      await db.update(tAssignment, { id: assignment.id }).set((row) => ({
-        gradesCount: row.gradesCount + 1n,
-      }));
-    });
+    await db.insert(tGrades).values({ assignmentId: assignment.id, teacher });
+    await db.update(tAssignment, { id: assignment.id }).set((row) => ({
+      gradesCount: row.gradesCount + 1n,
+    }));
   }
 );
 

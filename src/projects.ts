@@ -12,16 +12,14 @@ ponder.on("ProjectsRegistry:ProjectCreated", async ({ context, event }) => {
 
   const { students, teachers } = project;
 
-  await db.sql.transaction(async (tx) => {
-    await tx.insert(tProject).values({ ...project, id: projectId });
+  await db.insert(tProject).values({ ...project, id: projectId });
 
-    const userProjectPromises = [...students, ...teachers].map((address) =>
-      tx.insert(tUserProject).values({
-        user: address,
-        projectId,
-      })
-    );
+  const userProjectPromises = [...students, ...teachers].map((address) =>
+    db.insert(tUserProject).values({
+      user: address,
+      projectId,
+    })
+  );
 
-    await Promise.all(userProjectPromises);
-  });
+  await Promise.all(userProjectPromises);
 });
